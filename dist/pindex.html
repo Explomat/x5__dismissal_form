@@ -1,0 +1,24 @@
+<%
+	function getRelativePath(absPath){
+		var searchStr = "\/wt/web\/";
+		return absPath.substr(absPath.indexOf(searchStr) + searchStr.length - 1);
+	}
+%>
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Cache-Control" content="no-cache" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<title>Отзыв при увольнении</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0" />
+	</head>
+
+	<body>
+		<div id="app" class="app"></div>
+		<script src=<%=getRelativePath(AbsoluteUrl("5e4dc92ab604ade36ed9.react.js"))%>></script>
+		<script src=<%=getRelativePath(AbsoluteUrl("5e4dc92ab604ade36ed9.bundle.js"))%>></script>
+		<link rel="stylesheet" type="text/css" href=<%=getRelativePath(AbsoluteUrl("style/5e4dc92ab604ade36ed9.style.min.css"))%> >
+	</body>
+</html>
