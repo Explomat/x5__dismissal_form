@@ -134,10 +134,6 @@ module.exports = {
                         path.join(__dirname, 'dist', project.htmlFileName),
                         htmlOutput
                     );
-                    fs.writeFileSync(
-                        path.join(__dirname, 'htmlOutput.json'),
-                        JSON.stringify(stats.assetsByChunkName)
-                    );
 
                     copySomeFilesToServer();
                 }
