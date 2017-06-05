@@ -29,7 +29,7 @@ function copySomeFilesToServer(){
 
     }
     try {
-    	fsExtra.copy(project.localServerPath, project.remoteServerPath);
+    	fsExtra.copySync(project.localServerPath, project.remoteServerPath);
     	console.log(`Copying success: ${project.localServerPath}`);
     } catch(err) {
     	console.log(err);
