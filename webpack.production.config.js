@@ -58,7 +58,7 @@ module.exports = {
                 test: /(\.js$)|(\.jsx$)/,
                 loaders: ['eslint'],
                 include: [
-                    path.resolve(__dirname, "js"),
+                    path.resolve(__dirname, "src"),
                 ],
             }
         ],

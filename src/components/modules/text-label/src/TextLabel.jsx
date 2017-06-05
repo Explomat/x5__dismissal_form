@@ -155,7 +155,7 @@ const TextAreaView = React.createClass(assign({}, TextBase, {
 
 	componentDidMount(){
 		TextBase.componentDidMount.call(this);
-		this.setState({ height: this.refs.hiddenBlock.offsetHeight });
+		//this.setState({ height: this.refs.hiddenBlock.offsetHeight });
 	},
 
 	_setHeight(){
@@ -184,12 +184,13 @@ const TextAreaView = React.createClass(assign({}, TextBase, {
 		const name = this.props.name;
 		const isNotEmptyClass = this.state.value === '' ? '' : 'textarea-box__input_not-empty';
 		const isValidClass = !this.props.isValid(this.state.value) ? this.validClass : '';
-		//const textAreaStyle = { height: this.state.height + 'px' };
+		const textAreaStyle = { height: this.state.height + 'px' };
 		const className = this.props.className ? this.props.className : '';
 		return (
 			<div className={'textarea-box ' + className} tabIndex={1} onBlur={this.handleDetranslate}>
 				<textarea
 					ref='inpt'
+					style={textAreaStyle}
 					name={name}
 					className={'textarea-box__input ' + isNotEmptyClass + ' ' + isValidClass}
 					rows={this.props.rows || 1}
@@ -213,7 +214,6 @@ const TextAreaView = React.createClass(assign({}, TextBase, {
 					{this.state.value}
 				</div>
 			</div>
-
 		);
 	}
 }));
