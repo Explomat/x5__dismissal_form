@@ -6,6 +6,10 @@ var ExtractTextPlugin = require ('extract-text-webpack-plugin');
 var project = require('./project.config');
 var packageSettings = require('./package.json');
 
+function _isArray(arr){
+    return Object.prototype.toString.call(arr) === '[object Array]';
+}
+
 function removeBuildFilesFromServer(){
     try {
     	fsExtra.removeSync(project.remoteClientPath);
@@ -41,7 +45,6 @@ module.exports = {
         main: './src/index',
         react: ['react']
     },
-    devtool: 'source-map',
     output: {
         path: project.remoteClientPath,
         publicPath: '/',
@@ -122,18 +125,25 @@ module.exports = {
                     var shtml = fs.readFileSync(path.join(__dirname, 'dist', 'sindex.html'), "utf8");
 
                     //<script src=<%=getRelativePath(AbsoluteUrl("react.js")) %>></script>
+                    var react = _isArray(stats.assetsByChunkName.react) ? stats.assetsByChunkName.react[0] : stats.assetsByChunkName.react;
+                    var style = stats.assetsByChunkName.main[1];
+                    var bundle = stats.assetsByChunkName.main[0];
                     var htmlOutput = shtml
                         .replace(/<script\s+src=(<%=)?(?:\s+)?([A-Za-z0-9_()]+)(["'])\/react\.js(["'])([()]+)(?:\s+)?(%>)?/i,
-                            "<script src=$1$2$3" + stats.assetsByChunkName.react[0] + "$4$5$6")
+                            "<script src=$1$2$3" + react + "$4$5$6")
                         .replace(/<link\s+(?:rel=["']stylesheet["']\s+type=["']text\/css["'])?\s+href=(<%=)?(?:\s+)?([A-Za-z0-9_()]+)(["'])\/style\/style\.min\.css(["'])([()]+)(?:\s+)?(%>)?/i,
-                            "<link rel=\"stylesheet\" type=\"text/css\" href=$1$2$3" + stats.assetsByChunkName.main[1] + "$4$5$6")
+                            "<link rel=\"stylesheet\" type=\"text/css\" href=$1$2$3" + style + "$4$5$6")
                         .replace(/<script\s+src=(<%=)?(?:\s+)?([A-Za-z0-9_()]+)(["'])\/bundle\.js(["'])([()]+)(?:\s+)?(%>)?/i,
-                            "<script src=$1$2$3" + stats.assetsByChunkName.main[0] + "$4$5$6")
+                            "<script src=$1$2$3" + bundle + "$4$5$6")
 
                     fs.writeFileSync(
                         path.join(__dirname, 'dist', project.htmlFileName),
                         htmlOutput
                     );
+                    /*fs.writeFileSync(
+                        path.join(__dirname, 'stats.json'),
+                        JSON.stringify(stats)
+                    );*/
 
                     copySomeFilesToServer();
                 }
