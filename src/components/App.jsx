@@ -23,13 +23,13 @@ class App extends Component {
 			isLoading: false,
 
 			work_experience: {
-				work_experience__less_3_months: false,
-				work_experience__3_to_6_months: false,
-				work_experience__half_to_1_year: false,
-				work_experience__1_to_1_5_years: false,
-				work_experience__1_5_to_3_years: false,
-				work_experience__3_to_6_years: false,
-				work_experience__more_6_years: false
+				we__less_3_months: false,
+				we__3_to_6_months: false,
+				we__half_to_1_year: false,
+				we__1_to_1_5_years: false,
+				we__1_5_to_3_years: false,
+				we__3_to_6_years: false,
+				we__more_6_years: false
 			},
 
 			position: {
@@ -40,43 +40,43 @@ class App extends Component {
 			},
 
 			not_like: {
-				not_like__team_attitude: false,
-				not_like__payment: false,
-				not_like__disrespect: false,
-				not_like__living_conditions: false,
-				not_like__equipment: false,
-				not_like__organization: false,
-				not_like__long_to_go_work: false,
-				not_like__location: false,
-				not_like__schedule: false,
-				not_like__load: false,
-				not_like__reprocessing: false,
-				not_like__reprocessing_not_paid: false,
-				not_like__heavy: false,
-				not_like__low_salary: false,
-				not_like__conditions_salary: false,
-				not_like__buy_products: false,
-				not_like__not_in_time_payment: false,
-				not_like__social_package: false,
-				not_like__monotony: false,
-				not_like__not_independence: false,
-				not_like__not_career: false
+				nl__team_attitude: false,
+				nl__payment: false,
+				nl__disrespect: false,
+				nl__living_conditions: false,
+				nl__equipment: false,
+				nl__organization: false,
+				nl__long_to_go_work: false,
+				nl__location: false,
+				nl__schedule: false,
+				nl__load: false,
+				nl__reprocessing: false,
+				nl__reprocessing_not_paid: false,
+				nl__heavy: false,
+				nl__low_salary: false,
+				nl__conditions_salary: false,
+				nl__buy_products: false,
+				nl__not_in_time_payment: false,
+				nl__social_package: false,
+				nl__monotony: false,
+				nl__not_independence: false,
+				nl__not_career: false
 			},
 
 			time_to_work: {
-				time_to_work__not_planned: false,
-				time_to_work__more_than_month: false,
-				time_to_work__in_month: false
+				ttw__not_planned: false,
+				ttw__more_than_month: false,
+				ttw__in_month: false
 			},
 
 			leaving_company: '',
 
 			return_to_company: {
-				return_to_company__yes: false,
-				return_to_company__yes_conditions: false,
-				return_to_company__no: false
+				rtc__yes: false,
+				rtc__yes_conditions: false,
+				rtc__no: false
 			},
-			return_to_company__yes_conditions_text: '',
+			rtc__yes_conditions_text: '',
 
 			fullname: '',
 
@@ -260,7 +260,7 @@ class App extends Component {
 			time_to_work,
 			leaving_company,
 			return_to_company,
-			return_to_company__yes_conditions_text,
+			rtc__yes_conditions_text,
 			fullname,
 			shop_name,
 			location
@@ -299,53 +299,53 @@ class App extends Component {
 										</div>
 										<div className='paragraph__body'>
 											<CheckBox
-												name='work_experience__less_3_months'
-												checked={work_experience.work_experience__less_3_months}
+												name='we__less_3_months'
+												checked={work_experience.we__less_3_months}
 												label='Менее 3х месяцев'
 												className='paragraph__control'
-												onChange={val => this.handleChange('work_experience', 'work_experience__less_3_months', val)}
+												onChange={val => this.handleChange('work_experience', 'we__less_3_months', val)}
 											/>
 											<CheckBox
-												name='work_experience__3_to_6_months'
-												checked={work_experience.work_experience__3_to_6_months}
+												name='we__3_to_6_months'
+												checked={work_experience.we__3_to_6_months}
 												label='От 3х месяцев до полугода включительно'
 												className='paragraph__control'
-												onChange={val => this.handleChange('work_experience', 'work_experience__3_to_6_months', val)}
+												onChange={val => this.handleChange('work_experience', 'we__3_to_6_months', val)}
 											/>
 											<CheckBox
-												name='work_experience__half_to_1_year'
-												checked={work_experience.work_experience__half_to_1_year}
+												name='we__half_to_1_year'
+												checked={work_experience.we__half_to_1_year}
 												label='От полугода до 1 года включительно'
 												className='paragraph__control'
-												onChange={val => this.handleChange('work_experience', 'work_experience__half_to_1_year', val)}
+												onChange={val => this.handleChange('work_experience', 'we__half_to_1_year', val)}
 											/>
 											<CheckBox
-												name='work_experience__1_to_1_5_years'
-												checked={work_experience.work_experience__1_to_1_5_years}
+												name='we__1_to_1_5_years'
+												checked={work_experience.we__1_to_1_5_years}
 												label='От года до 1.5 лет включительно'
 												className='paragraph__control'
-												onChange={val => this.handleChange('work_experience', 'work_experience__1_to_1_5_years', val)}
+												onChange={val => this.handleChange('work_experience', 'we__1_to_1_5_years', val)}
 											/>
 											<CheckBox
-												name='work_experience__1_5_to_3_years'
-												checked={work_experience.work_experience__1_5_to_3_years}
+												name='we__1_5_to_3_years'
+												checked={work_experience.we__1_5_to_3_years}
 												label='От 1.5 лет до 3 лет включительно'
 												className='paragraph__control'
-												onChange={val => this.handleChange('work_experience', 'work_experience__1_5_to_3_years', val)}
+												onChange={val => this.handleChange('work_experience', 'we__1_5_to_3_years', val)}
 											/>
 											<CheckBox
-												name='work_experience__3_to_6_years'
-												checked={work_experience.work_experience__3_to_6_years}
+												name='we__3_to_6_years'
+												checked={work_experience.we__3_to_6_years}
 												label='От 3 до 6 лет включительно'
 												className='paragraph__control'
-												onChange={val => this.handleChange('work_experience', 'work_experience__3_to_6_years', val)}
+												onChange={val => this.handleChange('work_experience', 'we__3_to_6_years', val)}
 											/>
 											<CheckBox
-												name='work_experience__more_6_years'
-												checked={work_experience.work_experience__more_6_years}
+												name='we__more_6_years'
+												checked={work_experience.we__more_6_years}
 												label='Более 6 лет'
 												className='paragraph__control'
-												onChange={val => this.handleChange('work_experience', 'work_experience__more_6_years', val)}
+												onChange={val => this.handleChange('work_experience', 'we__more_6_years', val)}
 											/>
 										</div>
 									</div>
@@ -391,153 +391,153 @@ class App extends Component {
 										</div>
 										<div className='paragraph__body'>
 											<CheckBox
-												name='not_like__team_attitude'
-												checked={not_like.not_like__team_attitude}
+												name='nl__team_attitude'
+												checked={not_like.nl__team_attitude}
 												label='Отношения в коллективе'
 												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'not_like__team_attitude', val)}
+												onChange={val => this.handleChange('not_like', 'nl__team_attitude', val)}
 											/>
 											<CheckBox
-												name='not_like__payment'
-												checked={not_like.not_like__payment}
+												name='nl__payment'
+												checked={not_like.nl__payment}
 												label='Несправедливая система оплаты труда'
 												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'not_like__payment', val)}
+												onChange={val => this.handleChange('not_like', 'nl__payment', val)}
 											/>
 											<CheckBox
-												name='not_like__disrespect'
-												checked={not_like.not_like__disrespect}
+												name='nl__disrespect'
+												checked={not_like.nl__disrespect}
 												label='Грубое, неуважительное отношение руководства магазина к персоналу'
 												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'not_like__disrespect', val)}
+												onChange={val => this.handleChange('not_like', 'nl__disrespect', val)}
 											/>
 											<CheckBox
-												name='not_like__living_conditions'
-												checked={not_like.not_like__living_conditions}
+												name='nl__living_conditions'
+												checked={not_like.nl__living_conditions}
 												label='Бытовые условия (холодно/жарко/не работает туалет и пр.)'
 												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'not_like__living_conditions', val)}
+												onChange={val => this.handleChange('not_like', 'nl__living_conditions', val)}
 											/>
 											<CheckBox
-												name='not_like__equipment'
-												checked={not_like.not_like__equipment}
+												name='nl__equipment'
+												checked={not_like.nl__equipment}
 												label='Оборудование сильно устарело/его не хватает и пр.'
 												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'not_like__equipment', val)}
+												onChange={val => this.handleChange('not_like', 'nl__equipment', val)}
 											/>
 											<CheckBox
-												name='not_like__organization'
-												checked={not_like.not_like__organization}
+												name='nl__organization'
+												checked={not_like.nl__organization}
 												label='Организация работы в магазине
 													(перебрасывают из отдела в отдел, много недоделанных задач и пр.)'
 												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'not_like__organization', val)}
+												onChange={val => this.handleChange('not_like', 'nl__organization', val)}
 											/>
 											<CheckBox
-												name='not_like__long_to_go_work'
-												checked={not_like.not_like__long_to_go_work}
+												name='nl__long_to_go_work'
+												checked={not_like.nl__long_to_go_work}
 												label='Слишком долго добираться до работы'
 												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'not_like__long_to_go_work', val)}
+												onChange={val => this.handleChange('not_like', 'nl__long_to_go_work', val)}
 											/>
 											<CheckBox
-												name='not_like__location'
-												checked={not_like.not_like__location}
+												name='nl__location'
+												checked={not_like.nl__location}
 												label='Магазин неудобно расположен, непросто добраться до работы'
 												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'not_like__location', val)}
+												onChange={val => this.handleChange('not_like', 'nl__location', val)}
 											/>
 											<CheckBox
-												name='not_like__schedule'
-												checked={not_like.not_like__schedule}
+												name='nl__schedule'
+												checked={not_like.nl__schedule}
 												label='Неудобный график работы'
 												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'not_like__schedule', val)}
+												onChange={val => this.handleChange('not_like', 'nl__schedule', val)}
 											/>
 											<CheckBox
-												name='not_like__load'
-												checked={not_like.not_like__load}
+												name='nl__load'
+												checked={not_like.nl__load}
 												label='Чрезмерная нагрузка/темп работы'
 												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'not_like__load', val)}
+												onChange={val => this.handleChange('not_like', 'nl__load', val)}
 											/>
 											<CheckBox
-												name='not_like__reprocessing'
-												checked={not_like.not_like__reprocessing}
+												name='nl__reprocessing'
+												checked={not_like.nl__reprocessing}
 												label='Наличие переработок, даже если они оплачиваются'
 												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'not_like__reprocessing', val)}
+												onChange={val => this.handleChange('not_like', 'nl__reprocessing', val)}
 											/>
 											<CheckBox
-												name='not_like__reprocessing_not_paid'
-												checked={not_like.not_like__reprocessing_not_paid}
+												name='nl__reprocessing_not_paid'
+												checked={not_like.nl__reprocessing_not_paid}
 												label='Переработки не оплачивается'
 												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'not_like__reprocessing_not_paid', val)}
+												onChange={val => this.handleChange('not_like', 'nl__reprocessing_not_paid', val)}
 											/>
 											<CheckBox
-												name='not_like__heavy'
-												checked={not_like.not_like__heavy}
+												name='nl__heavy'
+												checked={not_like.nl__heavy}
 												label='Физически тяжелая работа (приходится самим носить тяжести и пр.)'
 												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'not_like__heavy', val)}
+												onChange={val => this.handleChange('not_like', 'nl__heavy', val)}
 											/>
 											<CheckBox
-												name='not_like__low_salary'
-												checked={not_like.not_like__low_salary}
+												name='nl__low_salary'
+												checked={not_like.nl__low_salary}
 												label='Размер зарплаты ниже, чем в аналогичных компаниях'
 												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'not_like__low_salary', val)}
+												onChange={val => this.handleChange('not_like', 'nl__low_salary', val)}
 											/>
 											<CheckBox
-												name='not_like__conditions_salary'
-												checked={not_like.not_like__conditions_salary}
+												name='nl__conditions_salary'
+												checked={not_like.nl__conditions_salary}
 												label='Непонятно, из чего складывается зарплата'
 												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'not_like__conditions_salary', val)}
+												onChange={val => this.handleChange('not_like', 'nl__conditions_salary', val)}
 											/>
 											<CheckBox
-												name='not_like__buy_products'
-												checked={not_like.not_like__buy_products}
+												name='nl__buy_products'
+												checked={not_like.nl__buy_products}
 												label='Сотрудников принуждают покупать товар
 													(по акции на кассе/просроченный/платить за украденный)'
 												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'not_like__buy_products', val)}
+												onChange={val => this.handleChange('not_like', 'nl__buy_products', val)}
 											/>
 											<CheckBox
-												name='not_like__not_in_time_payment'
-												checked={not_like.not_like__not_in_time_payment}
+												name='nl__not_in_time_payment'
+												checked={not_like.nl__not_in_time_payment}
 												label='Несвоевременная/некорректная оплата труда'
 												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'not_like__not_in_time_payment', val)}
+												onChange={val => this.handleChange('not_like', 'nl__not_in_time_payment', val)}
 											/>
 											<CheckBox
-												name='not_like__social_package'
-												checked={not_like.not_like__social_package}
+												name='nl__social_package'
+												checked={not_like.nl__social_package}
 												label='Нет хорошего социального пакета'
 												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'not_like__social_package', val)}
+												onChange={val => this.handleChange('not_like', 'nl__social_package', val)}
 											/>
 											<CheckBox
-												name='not_like__monotony'
-												checked={not_like.not_like__monotony}
+												name='nl__monotony'
+												checked={not_like.nl__monotony}
 												label='Однообразные рабочие задачи'
 												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'not_like__monotony', val)}
+												onChange={val => this.handleChange('not_like', 'nl__monotony', val)}
 											/>
 											<CheckBox
-												name='not_like__not_independence'
-												checked={not_like.not_like__not_independence}
+												name='nl__not_independence'
+												checked={not_like.nl__not_independence}
 												label='Отсутствие полномочий и самостоятельности'
 												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'not_like__not_independence', val)}
+												onChange={val => this.handleChange('not_like', 'nl__not_independence', val)}
 											/>
 											<CheckBox
-												name='not_like__not_career'
-												checked={not_like.not_like__not_career}
+												name='nl__not_career'
+												checked={not_like.nl__not_career}
 												label='Отсутствие карьерного роста'
 												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'not_like__not_career', val)}
+												onChange={val => this.handleChange('not_like', 'nl__not_career', val)}
 											/>
 										</div>
 									</div>
@@ -548,25 +548,25 @@ class App extends Component {
 										</div>
 										<div className='paragraph__body'>
 											<CheckBox
-												name='time_to_work__not_planned'
-												checked={time_to_work.time_to_work__not_planned}
+												name='ttw__not_planned'
+												checked={time_to_work.ttw__not_planned}
 												label='Не планирую в ближайшее время'
 												className='paragraph__control'
-												onChange={val => this.handleChange('time_to_work', 'time_to_work__not_planned', val)}
+												onChange={val => this.handleChange('time_to_work', 'ttw__not_planned', val)}
 											/>
 											<CheckBox
-												name='time_to_work__more_than_month'
-												checked={time_to_work.time_to_work__more_than_month}
+												name='ttw__more_than_month'
+												checked={time_to_work.ttw__more_than_month}
 												label='Через месяц и более'
 												className='paragraph__control'
-												onChange={val => this.handleChange('time_to_work', 'time_to_work__more_than_month', val)}
+												onChange={val => this.handleChange('time_to_work', 'ttw__more_than_month', val)}
 											/>
 											<CheckBox
-												name='time_to_work__in_month'
-												checked={time_to_work.time_to_work__in_month}
+												name='ttw__in_month'
+												checked={time_to_work.ttw__in_month}
 												label='В течение месяца'
 												className='paragraph__control'
-												onChange={val => this.handleChange('time_to_work', 'time_to_work__in_month', val)}
+												onChange={val => this.handleChange('time_to_work', 'ttw__in_month', val)}
 											/>
 										</div>
 									</div>
@@ -590,33 +590,33 @@ class App extends Component {
 										</div>
 										<div className='paragraph__body'>
 											<CheckBox
-												name='return_to_company__yes'
-												checked={return_to_company.return_to_company__yes}
+												name='rtc__yes'
+												checked={return_to_company.rtc__yes}
 												label='Да'
 												className='paragraph__control'
-												onChange={val => this.handleChange('return_to_company', 'return_to_company__yes', val)}
+												onChange={val => this.handleChange('return_to_company', 'rtc__yes', val)}
 											/>
 											<CheckBox
-												name='return_to_company__yes_conditions'
-												checked={return_to_company.return_to_company__yes_conditions}
+												name='rtc__yes_conditions'
+												checked={return_to_company.rtc__yes_conditions}
 												label='Да, при условии (впишите, пожалуйста, условие)'
 												className='paragraph__control'
-												onChange={val => this.handleChange('return_to_company', 'return_to_company__yes_conditions', val)}
+												onChange={val => this.handleChange('return_to_company', 'rtc__yes_conditions', val)}
 											/>
 											{
-												return_to_company.return_to_company__yes_conditions &&
+												return_to_company.rtc__yes_conditions &&
 												<TextView
-													name='return_to_company__yes_conditions_text'
-													value={return_to_company__yes_conditions_text}
-													onBlur={val => this.handleChange(null, 'return_to_company__yes_conditions_text', val)}
+													name='rtc__yes_conditions_text'
+													value={rtc__yes_conditions_text}
+													onBlur={val => this.handleChange(null, 'rtc__yes_conditions_text', val)}
 												/>
 											}
 											<CheckBox
-												name='return_to_company__no'
-												checked={return_to_company.return_to_company__no}
+												name='rtc__no'
+												checked={return_to_company.rtc__no}
 												label='Нет'
 												className='paragraph__control'
-												onChange={val => this.handleChange('return_to_company', 'return_to_company__no', val)}
+												onChange={val => this.handleChange('return_to_company', 'rtc__no', val)}
 											/>
 										</div>
 									</div>

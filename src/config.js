@@ -6,6 +6,7 @@ const customBaseUrl = process.env.NODE_ENV === 'production' ? '/custom_web_templ
 addServer({ id: '6426559944368726663', name: 'dismissal_form' })
 .addActions(
 	[
+		'Ping',
 		'Submit'
 	]
 );

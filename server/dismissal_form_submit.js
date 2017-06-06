@@ -12,19 +12,15 @@ function __assignDoc(te, obj){
     }
 }
 
-function getPing(){
-    return tools.object_to_text({status: 'pong'}, 'json');
-}
-
-function postSubmit(queryObjects){
+function post_Submit(queryObjects){
     try {
         var obj = tools.read_object(queryObjects.Body);
         var curDoc = OpenNewDoc("x-local://udt/udt_cc_dismissal_form.xmd");
 		curDoc.BindToDb();
-        //__assignDoc(curDoc.TopElem, obj);
-        //curDoc.Save();
+        __assignDoc(curDoc.TopElem, obj);
+        curDoc.Save();
 
-        curDoc.TopElem.we__less_3_months = obj.work_experience__less_3_months;
+        /*curDoc.TopElem.we__less_3_months = obj.work_experience__less_3_months;
         curDoc.TopElem.we__3_to_6_months = obj.work_experience__3_to_6_months;
         curDoc.TopElem.we__half_to_1_year = obj.work_experience__half_to_1_year;
         curDoc.TopElem.we__1_to_1_5_years = obj.work_experience__1_to_1_5_years;
@@ -75,7 +71,7 @@ function postSubmit(queryObjects){
         curDoc.TopElem.shop_name = obj.shop_name;
 
         curDoc.TopElem.location = obj.location;
-        curDoc.Save();
+        curDoc.Save();*/
         return tools.object_to_text({
             status: 'ok'
         }, 'json');
