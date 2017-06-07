@@ -8,10 +8,6 @@ var integrationSource = require('./integration/source');
 var project = require('./project.config');
 var packageSettings = require('./package.json');
 
-function _isArray(arr){
-    return Object.prototype.toString.call(arr) === '[object Array]';
-}
-
 var publicPath =  `/${packageSettings.name}/client/`;
 
 module.exports = {
@@ -143,9 +139,6 @@ module.exports = {
                         path.join(__dirname, 'stats.json'),
                         JSON.stringify(stats)
                     );
-
-                    //integrationBuild.copyFiles();
-                    //integrationSource.removeFiles();
                 }
             });*/
         }
