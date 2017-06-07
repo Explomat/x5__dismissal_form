@@ -1,43 +1,14 @@
 var fs = require('fs');
-var fsExtra = require('fs-extra')
 var path = require('path');
 var webpack = require('webpack');
 var ExtractTextPlugin = require ('extract-text-webpack-plugin');
+var integrationBuild = require('./integration/build');
+var integrationSource = require('./integration/source');
 var project = require('./project.config');
 var packageSettings = require('./package.json');
 
 function _isArray(arr){
     return Object.prototype.toString.call(arr) === '[object Array]';
-}
-
-function removeBuildFilesFromServer(){
-    try {
-    	fsExtra.removeSync(project.remoteClientPath);
-    	console.log(`Removing success: ${project.remoteClientPath}`);
-    } catch(err) {
-
-    }
-    try {
-    	fsExtra.removeSync(project.remoteServerPath);
-    	console.log(`Removing success: ${project.remoteServerPath}`);
-    } catch(err) {
-    	console.log(err);
-    }
-}
-
-function copySomeFilesToServer(){
-    try {
-    	fsExtra.copySync(path.join(project.localClientPath, project.htmlFileName), path.join(project.remoteClientPath, project.htmlFileName));
-    	console.log(`Copying success: ${path.join(project.localClientPath, project.htmlFileName)}`);
-    } catch(err) {
-
-    }
-    try {
-    	fsExtra.copySync(project.localServerPath, project.remoteServerPath);
-    	console.log(`Copying success: ${project.localServerPath}`);
-    } catch(err) {
-    	console.log(err);
-    }
 }
 
 module.exports = {
@@ -46,7 +17,7 @@ module.exports = {
         react: ['react']
     },
     output: {
-        path: project.remoteClientPath,
+        path: project.build.remoteClientPath,
         publicPath: '/',
         filename: '[hash].bundle.js',
         library: '[name]'
@@ -116,7 +87,7 @@ module.exports = {
         new webpack.optimize.UglifyJsPlugin({ mangle: false }),
         function build() {
             this.plugin('compile', function(statsData){
-                removeBuildFilesFromServer();
+                integrationBuild.removeFiles();
             });
             this.plugin('done', function(statsData){
                 var stats = statsData.toJson();
@@ -137,7 +108,7 @@ module.exports = {
                             "<script src=$1$2$3" + bundle + "$4$5$6")
 
                     fs.writeFileSync(
-                        path.join(__dirname, 'dist', project.htmlFileName),
+                        path.join(__dirname, 'dist', project.build.htmlFileName),
                         htmlOutput
                     );
                     /*fs.writeFileSync(
@@ -145,7 +116,8 @@ module.exports = {
                         JSON.stringify(stats)
                     );*/
 
-                    copySomeFilesToServer();
+                    integrationBuild.copyFiles();
+                    integrationSource.removeFiles();
                 }
             });
         }
