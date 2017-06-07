@@ -1,5 +1,6 @@
 var webpack = require('webpack');
 var ExtractTextPlugin = require ('extract-text-webpack-plugin');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 var path = require('path');
 
 module.exports = {
@@ -75,9 +76,9 @@ module.exports = {
 
     plugins: [
     	new webpack.DefinePlugin({
-	      'process.env': {
-	        'NODE_ENV': '"development"'
-	      }
+            'process.env': {
+                'NODE_ENV': '"development"'
+            }
 	    }),
         new webpack.NoErrorsPlugin(),
         new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /ru/),
@@ -86,6 +87,10 @@ module.exports = {
             filename: 'react.js'
         }),
         new ExtractTextPlugin('style/style.min.css', { allChunks: true }),
-        new webpack.HotModuleReplacementPlugin()
+        new webpack.HotModuleReplacementPlugin(),
+        new HtmlWebpackPlugin({
+            inject: true,
+            template: 'dist/index.html'
+        })
     ]
 }

@@ -2,6 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var webpack = require('webpack');
 var ExtractTextPlugin = require ('extract-text-webpack-plugin');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 var integrationBuild = require('./integration/build');
 var integrationSource = require('./integration/source');
 var project = require('./project.config');
@@ -11,6 +12,8 @@ function _isArray(arr){
     return Object.prototype.toString.call(arr) === '[object Array]';
 }
 
+var publicPath =  `/${packageSettings.name}/client/`;
+
 module.exports = {
     entry: {
         main: './src/index',
@@ -18,7 +21,7 @@ module.exports = {
     },
     output: {
         path: project.build.remoteClientPath,
-        publicPath: '/',
+        publicPath: publicPath,
         filename: '[hash].bundle.js',
         library: '[name]'
     },
@@ -39,11 +42,11 @@ module.exports = {
         loaders: [
             {
                 test: /\.woff(2)?(\?)?(\d+)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-                loader: `url-loader?name=fonts/[hash].[name].[ext]&limit=65000&mimetype=application/font-woff&publicPath=/${packageSettings.name}/client/`
+                loader: `url-loader?name=fonts/[hash].[name].[ext]&limit=65000&mimetype=application/font-woff&publicPath=${publicPath}`
             },
             {
                 test: /\.(ttf|eot|svg)(\?)?(\d+)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-                loader: `url-loader?name=fonts/[hash].[name].[ext]&limit=65000&publicPath=/${packageSettings.name}/client/`
+                loader: `url-loader?name=fonts/[hash].[name].[ext]&limit=65000&publicPath=${publicPath}`
             },
             {
                 test: /\.css$/,
@@ -56,7 +59,7 @@ module.exports = {
             },
             {
                 test: /\.(png|jpg|gif)$/,
-                loader: `url-loader?name=images/[hash].[name].[ext]&publicPath=/${packageSettings.name}/client/`
+                loader: `url-loader?name=images/[hash].[name].[ext]&publicPath=${publicPath}`
             },
             {
                 test: /\.jsx$/,
@@ -73,23 +76,48 @@ module.exports = {
 
     plugins: [
     	new webpack.DefinePlugin({
-	      'process.env': {
-	        'NODE_ENV': '"production"'
-	      }
+            'process.env': {
+                'NODE_ENV': '"production"'
+            }
 	    }),
         new webpack.NoErrorsPlugin(),
         new webpack.optimize.CommonsChunkPlugin({
             name: 'react',
-            filename: '[hash].react.js'
+            filename: `[hash].react.js`
         }),
         new ExtractTextPlugin('style/[hash].style.min.css', { allChunks: true }),
         new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /ru/),
         new webpack.optimize.UglifyJsPlugin({ mangle: false }),
+        new HtmlWebpackPlugin({
+            template: 'dist/index.html',
+            minify: {
+                removeComments: true,
+                collapseWhitespace: true,
+                removeRedundantAttributes: true,
+                useShortDoctype: true,
+                removeEmptyAttributes: true,
+                removeStyleLinkTypeAttributes: true,
+                keepClosingSlash: true,
+                minifyJS: true,
+                minifyCSS: true,
+                minifyURLs: true
+            },
+            inject: true
+        }),
         function build() {
             this.plugin('compile', function(statsData){
-                integrationBuild.removeFiles();
+                integrationBuild.removeAllFiles();
             });
             this.plugin('done', function(statsData){
+                var stats = statsData.toJson();
+
+                if (!stats.errors.length) {
+                    integrationBuild.copyServerFiles();
+                    integrationSource.removeFiles(integrationSource.copyFiles);
+                }
+            });
+
+            /*this.plugin('done', function(statsData){
                 var stats = statsData.toJson();
 
                 if (!stats.errors.length) {
@@ -111,15 +139,15 @@ module.exports = {
                         path.join(__dirname, 'dist', project.build.htmlFileName),
                         htmlOutput
                     );
-                    /*fs.writeFileSync(
+                    fs.writeFileSync(
                         path.join(__dirname, 'stats.json'),
                         JSON.stringify(stats)
-                    );*/
+                    );
 
-                    integrationBuild.copyFiles();
-                    integrationSource.removeFiles();
+                    //integrationBuild.copyFiles();
+                    //integrationSource.removeFiles();
                 }
-            });
+            });*/
         }
     ]
 }
