@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import CheckBox from './modules/checkbox-new';
+import CheckBox from './modules/checkbox';
 import { TextView, TextAreaView } from './modules/text-label';
 import { ButtonPrimary } from './modules/button';
 import { AlertDanger, AlertInfo } from './modules/alert';
