@@ -1,13 +1,15 @@
 var project = require('../project.config');
 var fsExtra = require('fs-extra');
 var path = require('path');
+require('console-info');
+require('console-error');
 
 function removeFiles(cb){
     var rPath = project.source.remoteSourcePath;
 
     fsExtra.remove(rPath, function(err){
         if (err) return console.error(err);
-        console.log(`Removing source files success: ${rPath}`);
+        console.info(`Removing source files success: ${rPath}`);
         if (cb){
             cb();
         }
@@ -40,11 +42,11 @@ function copyFiles(){
 
         var isCopy = (isIn(src, include) || !include.length) && (!isIn(src, exclude) || !exclude.length);
         if (isCopy){
-            console.log('Copying source' + src);
+            console.info(`Copying source : ${src}`);
             return isCopy;
         }
     }}, function(err) {
-        console.log(err);
+        console.error(err);
     });
 }
 
