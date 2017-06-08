@@ -207,8 +207,8 @@ class App extends Component {
 	_isFieldsFilled(){
 		const state = this.state;
 		const returnToCompanyYesConditionsText =
-			state.return_to_company.return_to_company__yes_conditions ?
-			state.return_to_company__yes_conditions_text :
+			state.return_to_company.rtc__yes_conditions ?
+			state.rtc__yes_conditions_text :
 			true;
 
 

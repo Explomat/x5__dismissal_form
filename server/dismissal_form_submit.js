@@ -1,5 +1,83 @@
 <%
 
+function _isFieldsFilled(state){
+
+    function _setGroups(){
+        var groups = {};
+        for (s in state){
+            isGr = s.indexOf('__') != -1;
+            if (isGr){
+                gr = s.substr(0, s.indexOf('__'));
+                if (groups.GetOptProperty(gr) == undefined){
+                    groups.SetProperty(gr, {});
+                }
+                groups.GetProperty(gr).SetProperty(s, state[s]);
+            } else {
+                groups.SetProperty(s, state[s]);
+            }
+        }
+        return groups;
+    }
+
+    var groups = _setGroups();
+
+    var rtcYesConditionsText =
+        groups.rtc.rtc__yes_conditions ?
+        groups.rtc.rtc__yes_conditions_text :
+        true;
+
+
+    var isTextFieldsFilled =
+        groups.fullname != '' &&
+        groups.shop_name != '' &&
+        groups.location != '' &&
+        rtcYesConditionsText != '';
+
+    var weFilledFields = [];
+    for (g in groups.we){
+        if (groups.we[g] == true){
+            weFilledFields.push(groups.we[g]);
+        }
+    }
+
+    var positionsFilledFields = [];
+    for (g in groups.position){
+        if (groups.position[g] == true){
+            positionsFilledFields.push(groups.position[g]);
+        }
+    }
+
+    var nlFilledFields = [];
+    for (g in groups.nl){
+        if (groups.nl[g] == true){
+            nlFilledFields.push(groups.nl[g]);
+        }
+    }
+
+    var isTtwGroupFilled = [];
+    for (g in groups.ttw){
+        if (groups.ttw[g] == true){
+            isTtwGroupFilled.push(groups.ttw[g]);
+        }
+    }
+
+    var rtcFilledFields = [];
+    for (g in groups.rtc){
+        if (groups.rtc[g] == true){
+            rtcFilledFields.push(groups.rtc[g]);
+        }
+    }
+
+    return (
+        isTextFieldsFilled &&
+        weFilledFields.length == 1 &&
+        positionsFilledFields.length == 1 &&
+        nlFilledFields.length == 3 &&
+        isTtwGroupFilled.length == 1 &&
+        rtcFilledFields.length == 1
+    );
+}
+
 function __assignDoc(te, obj){
     for (el in te){
         objVal = obj.GetOptProperty(el.Name);
@@ -15,6 +93,9 @@ function __assignDoc(te, obj){
 function post_Submit(queryObjects){
     try {
         var obj = tools.read_object(queryObjects.Body);
+        if (_isFieldsFilled(obj) == false){
+            throw 'Не заполнены обязательные поля.';
+        }
         var curDoc = OpenNewDoc("x-local://udt/udt_cc_dismissal_form.xmd");
 		curDoc.BindToDb();
         __assignDoc(curDoc.TopElem, obj);
