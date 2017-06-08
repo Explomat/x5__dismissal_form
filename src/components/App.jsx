@@ -273,7 +273,7 @@ class App extends Component {
 				<div className='dismissal-form'>
 					<div className='header'>
 						<div className='container'>
-							<a className='clearfix header__link' href='/x5__dismissal_form/client/pindex.html'>
+							<a className='clearfix header__link' href='/x5__dismissal_form/client/index.html'>
 								<div className='logo' />
 							</a>
 						</div>
