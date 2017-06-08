@@ -47,7 +47,11 @@ function copyFiles(){
         console.log(err);
     });
 }
+
+function syncFiles(){
+    removeFiles(copyFiles);
+}
+
 module.exports = {
-    removeFiles: removeFiles,
-    copyFiles: copyFiles
+    syncFiles: syncFiles
 }

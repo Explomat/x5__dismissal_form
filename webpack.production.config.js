@@ -109,7 +109,7 @@ module.exports = {
 
                 if (!stats.errors.length) {
                     integrationBuild.copyServerFiles();
-                    integrationSource.removeFiles(integrationSource.copyFiles);
+                    integrationSource.syncFiles();
                 }
             });
 
