@@ -16,7 +16,7 @@ var build = {
 var source = {
 	localSourcePath: __dirname,
 	remoteSourcePath: path.join(exportPath, 'x5__sources', packageSettings.name),
-	exclude: ['.git', 'node_modules']
+	exclude: [ '.git/', 'node_modules/' ]
 }
 
 module.exports = {

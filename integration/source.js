@@ -1,6 +1,8 @@
 var project = require('../project.config');
 var fsExtra = require('fs-extra');
+var fs = require('fs');
 var path = require('path');
+var mm = require('micromatch');
 require('console-info');
 require('console-error');
 
@@ -20,31 +22,24 @@ function copyFiles(){
     var proj = project.source;
 
     var include = (proj.include || []).map(function(f) {
-        return path.resolve(f);
+        return path.resolve(f).replace(/\\/g, '\/');
     });
     var exclude = (proj.exclude || []).map(function(f) {
-        return path.resolve(f);
+        return path.resolve(f).replace(/\\/g, '\/');
     });
 
-    var isIn = function(src, paths){
-        for (var i = paths.length - 1; i >= 0; i--) {
-        	var is =
-                src.replace('\/', '\/\/')
-                .indexOf(paths[i].replace('\/', '\/\/'));
-            if (is !== -1){
-                return true;
-            }
+    fsExtra.copy(proj.localSourcePath, proj.remoteSourcePath, { filter: function(src, dest) {
+        //var isDir = fs.statSync(src).isDirectory();
+        //var s = isDir ? src.replace(/\\/g, '\/') + '/' : src.replace(/\\/g, '\/');
+        var s = src.replace(/\\/g, '\/');
+        var isCopy = (mm.any(s, include, { dot: true }) || !include.length) &&
+            (!mm.any(s, exclude, { dot: true }) || !exclude.length);
+
+        if (isCopy){
+            console.info(`Copying source : ${s}`);
+            return true;
         }
         return false;
-    }
-
-    fsExtra.copy(proj.localSourcePath, proj.remoteSourcePath, { filter: function(src, dest) {
-
-        var isCopy = (isIn(src, include) || !include.length) && (!isIn(src, exclude) || !exclude.length);
-        if (isCopy){
-            console.info(`Copying source : ${src}`);
-            return isCopy;
-        }
     }}, function(err) {
         console.error(err);
     });
