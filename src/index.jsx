@@ -4,6 +4,7 @@ import App from './components/App';
 import { dom } from './config';
 
 import 'classlist-polyfill';
+import 'console-polyfill';
 import 'babel-polyfill';
 import './styles';
 
