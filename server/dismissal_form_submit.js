@@ -1,5 +1,7 @@
 <%
 
+var DOC_TYPE_ID = 6470846890311750379;
+
 function _isFieldsFilled(state){
 
     function _setGroups(){
@@ -40,12 +42,12 @@ function _isFieldsFilled(state){
         }
     }
 
-    var positionsFilledFields = [];
+    /*var positionsFilledFields = [];
     for (g in groups.position){
         if (groups.position[g] == true){
             positionsFilledFields.push(groups.position[g]);
         }
-    }
+    }*/
 
     var nlFilledFields = [];
     for (g in groups.nl){
@@ -71,7 +73,7 @@ function _isFieldsFilled(state){
     return (
         isTextFieldsFilled &&
         weFilledFields.length == 1 &&
-        positionsFilledFields.length == 1 &&
+        //positionsFilledFields.length == 1 &&
         nlFilledFields.length == 3 &&
         isTtwGroupFilled.length == 1 &&
         rtcFilledFields.length == 1
@@ -90,15 +92,43 @@ function __assignDoc(te, obj){
     }
 }
 
-function post_Submit(queryObjects){
+function get_Form(){
+    var doc = OpenDoc(UrlFromDocID(DOC_TYPE_ID));
+
+    var _sheets = doc.TopElem.sheets;
+    var _fields = doc.TopElem.fields;
+
+    var sheetsOut = [];
+    for (s in _sheets){
+        fieldsBySheet = ArraySelect(_fields, "This.sheet_id == '" + s.id + "'");
+        expression = tools.read_object(s.title);
+        sheetsOut.push({
+            id: String(s.id),
+            name: expression.GetOptProperty('name'),
+            title: expression.GetOptProperty('title'),
+            conditions: expression.GetOptProperty('conditions'),
+            fields: fieldsBySheet
+        });
+    }
+    return sheetsOut;
+}
+
+function post_Form(queryObjects){
     try {
+        var userCode = queryObjects.HasProperty('user_code') ? queryObjects.user_code : null;
+        if (userCode == null){
+            throw 'Не указан пользователь';
+        }
+
         var obj = tools.read_object(queryObjects.Body);
         if (_isFieldsFilled(obj) == false){
             throw 'Не заполнены обязательные поля.';
         }
-        var curDoc = OpenNewDoc("x-local://udt/udt_cc_dismissal_form.xmd");
+        var curDoc = OpenNewDoc("x-local://udt/udt_cc_dismissal_form_new_1.xmd");
 		curDoc.BindToDb();
         __assignDoc(curDoc.TopElem, obj);
+        curDoc.TopElem.user_code = userCode;
+        curDoc.TopElem.field_1 = 'test';
         curDoc.Save();
 
         /*curDoc.TopElem.we__less_3_months = obj.work_experience__less_3_months;

@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
+import Dropdown from './modules/dropdown';
 import CheckBox from './modules/checkbox';
 import { TextView, TextAreaView } from './modules/text-label';
 import { ButtonPrimary } from './modules/button';
 import { AlertDanger, AlertInfo } from './modules/alert';
 import keys from 'lodash/keys';
+import omit from 'lodash/omit';
 import { post } from '../utils/ajax';
 import { url } from '../config';
+import { getUrlParams } from '../utils/url';
 
 class App extends Component {
 
@@ -14,6 +17,7 @@ class App extends Component {
 
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleChange = this.handleChange.bind(this);
+		this.handleChangePosition = this.handleChangePosition.bind(this);
 		this.handleCloseError = this.handleCloseError.bind(this);
 		this._isFieldsFilled = this._isFieldsFilled.bind(this);
 
@@ -33,32 +37,46 @@ class App extends Component {
 			},
 
 			position: {
-				position__cashier_seller: false,
-				position__cashier_cook: false,
-				position__cashier_baker: false,
-				position__cashier_other: false
+				'*Кассир-продавец': true,
+				'Администратор торгового зала': false,
+				'Ведущий товаровед': false,
+				'Заведующий производством': false,
+				'Кассир-продавец': false,
+				'Менеджер расчетно-кассового узла': false,
+				'Менеджер свежих продуктов': false,
+				'Начальник пекарного производства': false,
+				'Пекарь': false,
+				'Пиццмейкер': false,
+				'Повар производства': false,
+				'Повар производства-обвальщик': false,
+				'Повар салатного производства': false,
+				'Повар суши': false,
+				'Продавец-кассир': false,
+				'Продавец-консультант': false,
+				'Продавец-пекарь': false,
+				'Специалист ОКЗиЦ': false,
+				'Специалист по заказу и приемке товара': false,
+				'Старший кассир': false,
+				'Старший пекарь': false,
+				'Старший повар производства': false,
+				'Старший продавец ФРОВ': false,
+				'Технолог по хлебу': false
 			},
 
 			not_like: {
 				nl__team_attitude: false,
-				nl__payment: false,
 				nl__disrespect: false,
 				nl__living_conditions: false,
 				nl__equipment: false,
 				nl__organization: false,
-				nl__long_to_go_work: false,
-				nl__location: false,
 				nl__schedule: false,
 				nl__load: false,
-				nl__reprocessing: false,
 				nl__reprocessing_not_paid: false,
 				nl__heavy: false,
 				nl__low_salary: false,
 				nl__conditions_salary: false,
 				nl__buy_products: false,
-				nl__not_in_time_payment: false,
 				nl__social_package: false,
-				nl__monotony: false,
 				nl__not_independence: false,
 				nl__not_career: false
 			},
@@ -107,16 +125,6 @@ class App extends Component {
 					}
 					break;
 				}
-				case 'position': {
-					for (const k in gr) {
-						if (k === key) {
-							gr[k] = val;
-						} else {
-							gr[k] = false;
-						}
-					}
-					break;
-				}
 				case 'not_like': {
 					const l =
 						keys(this.state.not_like)
@@ -156,6 +164,22 @@ class App extends Component {
 		}
 	}
 
+	handleChangePosition(e, p){
+		const { position } = this.state;
+		const newPosition = Object.keys(position).reduce((f, s) => {
+			if (p === s){
+				f[s] = true;
+			} else {
+				f[s] = false;
+			}
+			return f;
+		}, {});
+
+		this.setState({
+			position: newPosition
+		});
+	}
+
 	handleSubmit(e){
 		e.preventDefault();
 		if (!this._isFieldsFilled()){
@@ -189,7 +213,7 @@ class App extends Component {
 	}
 
 	_prepareDataBeforeRequest(){
-		const state = this.state;
+		const state = omit(this.state, [ 'position' ]);
 		const data = {};
 		keys(state).forEach(k => {
 			const st = state[k];
@@ -201,6 +225,8 @@ class App extends Component {
 				data[k] = state[k];
 			}
 		});
+		const pos = keys(this.state.position).filter(p => this.state.position[p] === true)[0];
+		data.position = pos;
 		return data;
 	}
 
@@ -222,10 +248,6 @@ class App extends Component {
 			keys(state.work_experience)
 			.filter(k => state.work_experience[k] === true)
 			.length === 1;
-		const isPositionGroupFilled =
-			keys(state.position)
-			.filter(k => state.position[k] === true)
-			.length === 1;
 		const isNotLikeGroupFilled =
 			keys(state.not_like)
 			.filter(k => state.not_like[k] === true)
@@ -242,7 +264,6 @@ class App extends Component {
 		return (
 			isTextFieldsFilled &&
 			isWorkExperienceGroupFilled &&
-			isPositionGroupFilled &&
 			isNotLikeGroupFilled &&
 			isTimeToWorkGroupFilled &&
 			isReturnToCompanyGroupFilled
@@ -268,12 +289,24 @@ class App extends Component {
 		const loadingClasses = isLoading ?
 			'overlay-loading overlay-loading--show body__loading' :
 			'overlay-loading';
+		const positions = Object.keys(position).map(p => {
+			return {
+				payload: p,
+				text: p
+			};
+		});
+		const selectedPosition = Object.keys(position).filter(p => position[p] === true)[0];
+		const urlParams = getUrlParams(window.location.href);
 		return (
-			<form ref='submitForm' action={url.createPath({ server_name: 'dismissal_form', action_name: 'Submit' })} onSubmit={this.handleSubmit}>
+			<form
+				ref='submitForm'
+				action={url.createPath({ server_name: 'dismissal_form', action_name: 'Submit', ...urlParams })}
+				onSubmit={this.handleSubmit}
+			>
 				<div className='dismissal-form'>
 					<div className='header'>
 						<div className='container'>
-							<a className='clearfix header__link' href='/x5__dismissal_form/client/index.html'>
+							<a className='clearfix header__link' href={window.location.href}>
 								<div className='logo' />
 							</a>
 						</div>
@@ -354,33 +387,11 @@ class App extends Component {
 											2. Ваша должность * (<em>выберите один вариант ответа</em>):
 										</div>
 										<div className='paragraph__body'>
-											<CheckBox
-												name='position__cashier_seller'
-												checked={position.position__cashier_seller}
-												label='Кассир-продавец'
-												className='paragraph__control'
-												onChange={val => this.handleChange('position', 'position__cashier_seller', val)}
-											/>
-											<CheckBox
-												name='position__cashier_cook'
-												checked={position.position__cashier_cook}
-												label='Повар'
-												className='paragraph__control'
-												onChange={val => this.handleChange('position', 'position__cashier_cook', val)}
-											/>
-											<CheckBox
-												name='position__cashier_baker'
-												checked={position.position__cashier_baker}
-												label='Пекарь'
-												className='paragraph__control'
-												onChange={val => this.handleChange('position', 'position__cashier_baker', val)}
-											/>
-											<CheckBox
-												name='position__cashier_other'
-												checked={position.position__cashier_other}
-												label='Другое'
-												className='paragraph__control'
-												onChange={val => this.handleChange('position', 'position__cashier_other', val)}
+											<Dropdown
+												title='Выберите должность'
+												items={positions}
+												selectedPayload={selectedPosition}
+												onChange={this.handleChangePosition}
 											/>
 										</div>
 									</div>
@@ -398,13 +409,6 @@ class App extends Component {
 												onChange={val => this.handleChange('not_like', 'nl__team_attitude', val)}
 											/>
 											<CheckBox
-												name='nl__payment'
-												checked={not_like.nl__payment}
-												label='Несправедливая система оплаты труда'
-												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'nl__payment', val)}
-											/>
-											<CheckBox
 												name='nl__disrespect'
 												checked={not_like.nl__disrespect}
 												label='Грубое, неуважительное отношение руководства магазина к персоналу'
@@ -414,14 +418,14 @@ class App extends Component {
 											<CheckBox
 												name='nl__living_conditions'
 												checked={not_like.nl__living_conditions}
-												label='Бытовые условия (холодно/жарко/не работает туалет и пр.)'
+												label='Бытовые условия (холодно/жарко/не работает туалет/состояние столовой)'
 												className='paragraph__control'
 												onChange={val => this.handleChange('not_like', 'nl__living_conditions', val)}
 											/>
 											<CheckBox
 												name='nl__equipment'
 												checked={not_like.nl__equipment}
-												label='Оборудование сильно устарело/его не хватает и пр.'
+												label='Оборудование сильно устарело/его не хватает/неисправно'
 												className='paragraph__control'
 												onChange={val => this.handleChange('not_like', 'nl__equipment', val)}
 											/>
@@ -429,23 +433,9 @@ class App extends Component {
 												name='nl__organization'
 												checked={not_like.nl__organization}
 												label='Организация работы в магазине
-													(перебрасывают из отдела в отдел, много недоделанных задач и пр.)'
+													(перебрасывают из отдела в отдел, много недоделанных задач)'
 												className='paragraph__control'
 												onChange={val => this.handleChange('not_like', 'nl__organization', val)}
-											/>
-											<CheckBox
-												name='nl__long_to_go_work'
-												checked={not_like.nl__long_to_go_work}
-												label='Слишком долго добираться до работы'
-												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'nl__long_to_go_work', val)}
-											/>
-											<CheckBox
-												name='nl__location'
-												checked={not_like.nl__location}
-												label='Магазин неудобно расположен, непросто добраться до работы'
-												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'nl__location', val)}
 											/>
 											<CheckBox
 												name='nl__schedule'
@@ -460,13 +450,6 @@ class App extends Component {
 												label='Чрезмерная нагрузка/темп работы'
 												className='paragraph__control'
 												onChange={val => this.handleChange('not_like', 'nl__load', val)}
-											/>
-											<CheckBox
-												name='nl__reprocessing'
-												checked={not_like.nl__reprocessing}
-												label='Наличие переработок, даже если они оплачиваются'
-												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'nl__reprocessing', val)}
 											/>
 											<CheckBox
 												name='nl__reprocessing_not_paid'
@@ -505,13 +488,6 @@ class App extends Component {
 												onChange={val => this.handleChange('not_like', 'nl__buy_products', val)}
 											/>
 											<CheckBox
-												name='nl__not_in_time_payment'
-												checked={not_like.nl__not_in_time_payment}
-												label='Несвоевременная/некорректная оплата труда'
-												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'nl__not_in_time_payment', val)}
-											/>
-											<CheckBox
 												name='nl__social_package'
 												checked={not_like.nl__social_package}
 												label='Нет хорошего социального пакета'
@@ -519,16 +495,9 @@ class App extends Component {
 												onChange={val => this.handleChange('not_like', 'nl__social_package', val)}
 											/>
 											<CheckBox
-												name='nl__monotony'
-												checked={not_like.nl__monotony}
-												label='Однообразные рабочие задачи'
-												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'nl__monotony', val)}
-											/>
-											<CheckBox
 												name='nl__not_independence'
 												checked={not_like.nl__not_independence}
-												label='Отсутствие полномочий и самостоятельности'
+												label='Отсутствие полномочий и самостоятельности принятия решений'
 												className='paragraph__control'
 												onChange={val => this.handleChange('not_like', 'nl__not_independence', val)}
 											/>
