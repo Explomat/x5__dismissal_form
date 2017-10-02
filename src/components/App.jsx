@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
-import Dropdown from './modules/dropdown';
-import CheckBox from './modules/checkbox';
-import { TextView, TextAreaView } from './modules/text-label';
+import Sheet from './Sheet';
 import { ButtonPrimary } from './modules/button';
 import { AlertDanger, AlertInfo } from './modules/alert';
-import keys from 'lodash/keys';
-import omit from 'lodash/omit';
-import { post } from '../utils/ajax';
+//import keys from 'lodash/keys';
+//import { post } from '../utils/ajax';
 import { url } from '../config';
 import { getUrlParams } from '../utils/url';
+import mock from '../mock'; 
 
 class App extends Component {
 
@@ -16,173 +14,63 @@ class App extends Component {
 		super(props);
 
 		this.handleSubmit = this.handleSubmit.bind(this);
-		this.handleChange = this.handleChange.bind(this);
-		this.handleChangePosition = this.handleChangePosition.bind(this);
 		this.handleCloseError = this.handleCloseError.bind(this);
 		this._isFieldsFilled = this._isFieldsFilled.bind(this);
+		this.handleSheetChange = this.handleSheetChange.bind(this);
 
 		this.state = {
 			error: '',
 			message: '',
-			isLoading: false,
-
-			work_experience: {
-				we__less_3_months: false,
-				we__3_to_6_months: false,
-				we__half_to_1_year: false,
-				we__1_to_1_5_years: false,
-				we__1_5_to_3_years: false,
-				we__3_to_6_years: false,
-				we__more_6_years: false
-			},
-
-			position: {
-				'*Кассир-продавец': true,
-				'Администратор торгового зала': false,
-				'Ведущий товаровед': false,
-				'Заведующий производством': false,
-				'Кассир-продавец': false,
-				'Менеджер расчетно-кассового узла': false,
-				'Менеджер свежих продуктов': false,
-				'Начальник пекарного производства': false,
-				'Пекарь': false,
-				'Пиццмейкер': false,
-				'Повар производства': false,
-				'Повар производства-обвальщик': false,
-				'Повар салатного производства': false,
-				'Повар суши': false,
-				'Продавец-кассир': false,
-				'Продавец-консультант': false,
-				'Продавец-пекарь': false,
-				'Специалист ОКЗиЦ': false,
-				'Специалист по заказу и приемке товара': false,
-				'Старший кассир': false,
-				'Старший пекарь': false,
-				'Старший повар производства': false,
-				'Старший продавец ФРОВ': false,
-				'Технолог по хлебу': false
-			},
-
-			not_like: {
-				nl__team_attitude: false,
-				nl__disrespect: false,
-				nl__living_conditions: false,
-				nl__equipment: false,
-				nl__organization: false,
-				nl__schedule: false,
-				nl__load: false,
-				nl__reprocessing_not_paid: false,
-				nl__heavy: false,
-				nl__low_salary: false,
-				nl__conditions_salary: false,
-				nl__buy_products: false,
-				nl__social_package: false,
-				nl__not_independence: false,
-				nl__not_career: false
-			},
-
-			time_to_work: {
-				ttw__not_planned: false,
-				ttw__more_than_month: false,
-				ttw__in_month: false
-			},
-
-			leaving_company: '',
-
-			return_to_company: {
-				rtc__yes: false,
-				rtc__yes_conditions: false,
-				rtc__no: false
-			},
-			rtc__yes_conditions_text: '',
-
-			fullname: '',
-
-			shop_name: '',
-
-			location: ''
+			isFetching: true,
+			isLoadingSubmit: false
 		};
+	}
+
+	componentDidMount(){
+		const sheets = mock || [];
+		sheets.forEach(sh => {
+			const fields = sh.fields || [];
+			fields.forEach(field => {
+				const entries = (field.entries || {}).entry || [];
+				if (entries.filter(e => e.selected).length === 0
+					&& entries.length > 0
+				) {
+					entries[0].selected = true;
+				}
+			});
+		});
+
+		this.setState({
+			...this.state,
+			isFetching: false,
+			sheets
+		});
 	}
 
 	handleCloseError(){
 		this.setState({ error: '' });
 	}
 
-	handleChange(group, key, val) {
-		if (!group) {
-			this.setState({ [key]: val });
-		} else {
-			const gr = this.state[group];
-			const state = this.state;
-			switch (group) {
-				case 'work_experience': {
-					for (const k in gr) {
-						if (k === key) {
-							gr[k] = val;
-						} else {
-							gr[k] = false;
-						}
-					}
-					break;
-				}
-				case 'not_like': {
-					const l =
-						keys(this.state.not_like)
-						.filter(k => state.not_like[k] === true)
-						.length;
-					for (const k in gr) {
-						if (k === key && ((l === 3 && val === false) || l < 3)){
-							gr[k] = val;
-						}
-					}
-					break;
-				}
-				case 'time_to_work': {
-					for (const k in gr) {
-						if (k === key) {
-							gr[k] = val;
-						} else {
-							gr[k] = false;
-						}
-					}
-					break;
-				}
-				case 'return_to_company': {
-					for (const k in gr) {
-						if (k === key) {
-							gr[k] = val;
-						} else {
-							gr[k] = false;
-						}
-					}
-					break;
-				}
-				default:
-					break;
-			}
-			this.setState({ [group]: gr });
-		}
-	}
-
-	handleChangePosition(e, p){
-		const { position } = this.state;
-		const newPosition = Object.keys(position).reduce((f, s) => {
-			if (p === s){
-				f[s] = true;
-			} else {
-				f[s] = false;
-			}
-			return f;
-		}, {});
-
+	handleSheetChange(id, fields){
+		const { sheets } = this.state;
 		this.setState({
-			position: newPosition
+			sheets: sheets.map(sh => {
+				if (sh.id === id){
+					return {
+						...sh,
+						fields
+					};
+				}
+				return sh;
+			})
 		});
 	}
 
 	handleSubmit(e){
 		e.preventDefault();
-		if (!this._isFieldsFilled()){
+		const pdata = this._prepareDataBeforeRequest(this.state);
+		console.log(pdata);
+		/*if (!this._isFieldsFilled()){
 			this.setState({ error: 'Поля, помеченные звездочкой* должны быть заполнены!' });
 		} else {
 			const form = this.refs.submitForm;
@@ -209,93 +97,98 @@ class App extends Component {
 					message: 'Произошла непредвиденна ошибка, обратитесь на study@x5.ru. \r\n' + err
 				});
 			});
-		}
+		}*/
 	}
 
 	_prepareDataBeforeRequest(){
-		const state = omit(this.state, [ 'position' ]);
-		const data = {};
-		keys(state).forEach(k => {
-			const st = state[k];
-			if (typeof st === 'object'){
-				keys(st).forEach(s => {
-					data[s] = st[s];
-				});
-			} else {
-				data[k] = state[k];
-			}
-		});
-		const pos = keys(this.state.position).filter(p => this.state.position[p] === true)[0];
-		data.position = pos;
-		return data;
+		return this.state.sheets.reduce((shf, shs) => {
+			const fields = (shs.fields || []).reduce((f, s) => {
+				switch (s.type) {
+					case 'combo': {
+						const entry = ((s.entries || {}).entry || []).filter(e => e.selected)[0];
+						if (entry){
+							f[s.name] = entry.value;
+						}
+						return f;
+					}
+					case 'string': {
+						const val = s.value || '';
+						if (val.toString().trim() !== ''){
+							f[s.name] = val;
+						}
+						return f;
+					}
+					case 'bool': {
+						if (s.checked){
+							f[s.name] = s.checked;
+						}
+						return f;
+					}
+					default: return f;
+				}
+			}, {});
+			return {
+				...shf,
+				...fields
+			};
+		}, {});
 	}
 
 	_isFieldsFilled(){
-		const state = this.state;
-		const returnToCompanyYesConditionsText =
-			state.return_to_company.rtc__yes_conditions ?
-			state.rtc__yes_conditions_text :
-			true;
+		const { sheets } = this.state;
+		const sheetsWithConditions = sheets.filter(sh => sh.conditions !== undefined);
 
+		const filteredSheets = sheetsWithConditions.filter(sh => {
+			const conditions = Object.keys(sh.conditions);
+			const filteredConditions =  conditions.filter(k => {
+				switch (k) {
+					case 'bool': {
+						if (sh.conditions[k].required){
+							const fieldTypes = (sh.fields || []).filter(f => f.type === k);
+							const filteredfields = fieldTypes.filter(f => f.checked);
+							if (sh.conditions[k].length !== undefined){
+								return sh.conditions[k].length === filteredfields.length;
+							}
+							return filteredfields.length === fieldTypes.length;
+						}
+						return true;
+					}
+					case 'string': {
+						if (sh.conditions[k].required){
+							const fieldTypes = (sh.fields || []).filter(f => f.type === k);
+							const filteredfields = fieldTypes.filter(f => {
+								const val = f.value || '';
+								return val.toString().trim() !== '';
+							});
+							return filteredfields.length === fieldTypes.length;
+						}
+						return true;
+					}
+					default: return true;
+				}
+			});
+			return filteredConditions.length === conditions.length;
+		});
 
-		const isTextFieldsFilled =
-			state.fullname &&
-			state.shop_name &&
-			state.location &&
-			returnToCompanyYesConditionsText;
-
-		const isWorkExperienceGroupFilled =
-			keys(state.work_experience)
-			.filter(k => state.work_experience[k] === true)
-			.length === 1;
-		const isNotLikeGroupFilled =
-			keys(state.not_like)
-			.filter(k => state.not_like[k] === true)
-			.length === 3;
-		const isTimeToWorkGroupFilled =
-			keys(state.time_to_work)
-			.filter(k => state.time_to_work[k] === true)
-			.length === 1;
-		const isReturnToCompanyGroupFilled =
-			keys(state.return_to_company)
-			.filter(k => state.return_to_company[k] === true)
-			.length === 1;
-
-		return (
-			isTextFieldsFilled &&
-			isWorkExperienceGroupFilled &&
-			isNotLikeGroupFilled &&
-			isTimeToWorkGroupFilled &&
-			isReturnToCompanyGroupFilled
-		);
+		return filteredSheets.length === sheetsWithConditions.length;
 	}
 
 	render(){
 		const {
 			error,
 			message,
-			isLoading,
-			work_experience,
-			position,
-			not_like,
-			time_to_work,
-			leaving_company,
-			return_to_company,
-			rtc__yes_conditions_text,
-			fullname,
-			shop_name,
-			location
+			isFetching,
+			isLoadingSubmit,
+			sheets
 		} = this.state;
-		const loadingClasses = isLoading ?
+
+		if (isFetching){
+			return <div className='overlay-loading overlay-loading--show' />;
+		}
+
+		const loadingClasses = isLoadingSubmit ?
 			'overlay-loading overlay-loading--show body__loading' :
 			'overlay-loading';
-		const positions = Object.keys(position).map(p => {
-			return {
-				payload: p,
-				text: p
-			};
-		});
-		const selectedPosition = Object.keys(position).filter(p => position[p] === true)[0];
 		const urlParams = getUrlParams(window.location.href);
 		return (
 			<form
@@ -325,306 +218,7 @@ class App extends Component {
 									в архиве и не<br/>подлежит разглашению.
 								</div>
 								<div className='body_paragraphs'>
-									<div className='paragraph'>
-										<div className='paragraph__title'>
-											1. Ваш стаж на текущем месте работы на момент увольнения *
-											(<em>выберите один вариант ответа</em>):
-										</div>
-										<div className='paragraph__body'>
-											<CheckBox
-												name='we__less_3_months'
-												checked={work_experience.we__less_3_months}
-												label='Менее 3х месяцев'
-												className='paragraph__control'
-												onChange={val => this.handleChange('work_experience', 'we__less_3_months', val)}
-											/>
-											<CheckBox
-												name='we__3_to_6_months'
-												checked={work_experience.we__3_to_6_months}
-												label='От 3х месяцев до полугода включительно'
-												className='paragraph__control'
-												onChange={val => this.handleChange('work_experience', 'we__3_to_6_months', val)}
-											/>
-											<CheckBox
-												name='we__half_to_1_year'
-												checked={work_experience.we__half_to_1_year}
-												label='От полугода до 1 года включительно'
-												className='paragraph__control'
-												onChange={val => this.handleChange('work_experience', 'we__half_to_1_year', val)}
-											/>
-											<CheckBox
-												name='we__1_to_1_5_years'
-												checked={work_experience.we__1_to_1_5_years}
-												label='От года до 1.5 лет включительно'
-												className='paragraph__control'
-												onChange={val => this.handleChange('work_experience', 'we__1_to_1_5_years', val)}
-											/>
-											<CheckBox
-												name='we__1_5_to_3_years'
-												checked={work_experience.we__1_5_to_3_years}
-												label='От 1.5 лет до 3 лет включительно'
-												className='paragraph__control'
-												onChange={val => this.handleChange('work_experience', 'we__1_5_to_3_years', val)}
-											/>
-											<CheckBox
-												name='we__3_to_6_years'
-												checked={work_experience.we__3_to_6_years}
-												label='От 3 до 6 лет включительно'
-												className='paragraph__control'
-												onChange={val => this.handleChange('work_experience', 'we__3_to_6_years', val)}
-											/>
-											<CheckBox
-												name='we__more_6_years'
-												checked={work_experience.we__more_6_years}
-												label='Более 6 лет'
-												className='paragraph__control'
-												onChange={val => this.handleChange('work_experience', 'we__more_6_years', val)}
-											/>
-										</div>
-									</div>
-									<div className='paragraph'>
-										<div className='paragraph__title'>
-											2. Ваша должность * (<em>выберите один вариант ответа</em>):
-										</div>
-										<div className='paragraph__body'>
-											<Dropdown
-												title='Выберите должность'
-												items={positions}
-												selectedPayload={selectedPosition}
-												onChange={this.handleChangePosition}
-											/>
-										</div>
-									</div>
-									<div className='paragraph'>
-										<div className='paragraph__title'>
-											3. Отметьте, пожалуйста, галочкой 3 пункта, которые Вам&nbsp;*&nbsp;
-											<u className='paragraph__accent'>больше всего НЕ</u> нравились в Компании:
-										</div>
-										<div className='paragraph__body'>
-											<CheckBox
-												name='nl__team_attitude'
-												checked={not_like.nl__team_attitude}
-												label='Отношения в коллективе'
-												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'nl__team_attitude', val)}
-											/>
-											<CheckBox
-												name='nl__disrespect'
-												checked={not_like.nl__disrespect}
-												label='Грубое, неуважительное отношение руководства магазина к персоналу'
-												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'nl__disrespect', val)}
-											/>
-											<CheckBox
-												name='nl__living_conditions'
-												checked={not_like.nl__living_conditions}
-												label='Бытовые условия (холодно/жарко/не работает туалет/состояние столовой)'
-												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'nl__living_conditions', val)}
-											/>
-											<CheckBox
-												name='nl__equipment'
-												checked={not_like.nl__equipment}
-												label='Оборудование сильно устарело/его не хватает/неисправно'
-												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'nl__equipment', val)}
-											/>
-											<CheckBox
-												name='nl__organization'
-												checked={not_like.nl__organization}
-												label='Организация работы в магазине
-													(перебрасывают из отдела в отдел, много недоделанных задач)'
-												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'nl__organization', val)}
-											/>
-											<CheckBox
-												name='nl__schedule'
-												checked={not_like.nl__schedule}
-												label='Неудобный график работы'
-												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'nl__schedule', val)}
-											/>
-											<CheckBox
-												name='nl__load'
-												checked={not_like.nl__load}
-												label='Чрезмерная нагрузка/темп работы'
-												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'nl__load', val)}
-											/>
-											<CheckBox
-												name='nl__reprocessing_not_paid'
-												checked={not_like.nl__reprocessing_not_paid}
-												label='Переработки не оплачивается'
-												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'nl__reprocessing_not_paid', val)}
-											/>
-											<CheckBox
-												name='nl__heavy'
-												checked={not_like.nl__heavy}
-												label='Физически тяжелая работа (приходится самим носить тяжести и пр.)'
-												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'nl__heavy', val)}
-											/>
-											<CheckBox
-												name='nl__low_salary'
-												checked={not_like.nl__low_salary}
-												label='Размер зарплаты ниже, чем в аналогичных компаниях'
-												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'nl__low_salary', val)}
-											/>
-											<CheckBox
-												name='nl__conditions_salary'
-												checked={not_like.nl__conditions_salary}
-												label='Непонятно, из чего складывается зарплата'
-												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'nl__conditions_salary', val)}
-											/>
-											<CheckBox
-												name='nl__buy_products'
-												checked={not_like.nl__buy_products}
-												label='Сотрудников принуждают покупать товар
-													(по акции на кассе/просроченный/платить за украденный)'
-												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'nl__buy_products', val)}
-											/>
-											<CheckBox
-												name='nl__social_package'
-												checked={not_like.nl__social_package}
-												label='Нет хорошего социального пакета'
-												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'nl__social_package', val)}
-											/>
-											<CheckBox
-												name='nl__not_independence'
-												checked={not_like.nl__not_independence}
-												label='Отсутствие полномочий и самостоятельности принятия решений'
-												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'nl__not_independence', val)}
-											/>
-											<CheckBox
-												name='nl__not_career'
-												checked={not_like.nl__not_career}
-												label='Отсутствие карьерного роста'
-												className='paragraph__control'
-												onChange={val => this.handleChange('not_like', 'nl__not_career', val)}
-											/>
-										</div>
-									</div>
-									<div className='paragraph'>
-										<div className='paragraph__title'>
-											4. Через какое время вы планируете выйти на новую работу? *&nbsp;
-											(<em>выберите один вариант ответа</em>)
-										</div>
-										<div className='paragraph__body'>
-											<CheckBox
-												name='ttw__not_planned'
-												checked={time_to_work.ttw__not_planned}
-												label='Не планирую в ближайшее время'
-												className='paragraph__control'
-												onChange={val => this.handleChange('time_to_work', 'ttw__not_planned', val)}
-											/>
-											<CheckBox
-												name='ttw__more_than_month'
-												checked={time_to_work.ttw__more_than_month}
-												label='Через месяц и более'
-												className='paragraph__control'
-												onChange={val => this.handleChange('time_to_work', 'ttw__more_than_month', val)}
-											/>
-											<CheckBox
-												name='ttw__in_month'
-												checked={time_to_work.ttw__in_month}
-												label='В течение месяца'
-												className='paragraph__control'
-												onChange={val => this.handleChange('time_to_work', 'ttw__in_month', val)}
-											/>
-										</div>
-									</div>
-									<div className='paragraph'>
-										<div className='paragraph__title'>
-											5. Если у вас есть желание, опишите, пожалуйста, более подробно,
-											почему вы уходите из Компании.
-										</div>
-										<div className='paragraph__body'>
-											<TextAreaView
-												name='leaving_company'
-												value={leaving_company}
-												onBlur={val => this.handleChange(null, 'leaving_company', val)}
-											/>
-										</div>
-									</div>
-									<div className='paragraph'>
-										<div className='paragraph__title'>
-											6. Готовы ли Вы вернуться обратно в Компанию через некоторое время? *&nbsp;
-											(<em>выберите один вариант ответа</em>)
-										</div>
-										<div className='paragraph__body'>
-											<CheckBox
-												name='rtc__yes'
-												checked={return_to_company.rtc__yes}
-												label='Да'
-												className='paragraph__control'
-												onChange={val => this.handleChange('return_to_company', 'rtc__yes', val)}
-											/>
-											<CheckBox
-												name='rtc__yes_conditions'
-												checked={return_to_company.rtc__yes_conditions}
-												label='Да, при условии (впишите, пожалуйста, условие)'
-												className='paragraph__control'
-												onChange={val => this.handleChange('return_to_company', 'rtc__yes_conditions', val)}
-											/>
-											{
-												return_to_company.rtc__yes_conditions &&
-												<TextView
-													name='rtc__yes_conditions_text'
-													value={rtc__yes_conditions_text}
-													onBlur={val => this.handleChange(null, 'rtc__yes_conditions_text', val)}
-												/>
-											}
-											<CheckBox
-												name='rtc__no'
-												checked={return_to_company.rtc__no}
-												label='Нет'
-												className='paragraph__control'
-												onChange={val => this.handleChange('return_to_company', 'rtc__no', val)}
-											/>
-										</div>
-									</div>
-									<div className='paragraph'>
-										<div className='paragraph__title'>
-											7. Ваши ФИО *
-										</div>
-										<div className='paragraph__body'>
-											<TextView
-												name='fullname'
-												value={fullname}
-												onBlur={val => this.handleChange(null, 'fullname', val)}
-											/>
-										</div>
-									</div>
-									<div className='paragraph'>
-										<div className='paragraph__title'>
-											8. Название магазина *
-										</div>
-										<div className='paragraph__body'>
-											<TextView
-												name='shop_name'
-												value={shop_name}
-												onBlur={val => this.handleChange(null, 'shop_name', val)}
-											/>
-										</div>
-									</div>
-									<div className='paragraph'>
-										<div className='paragraph__title'>
-											9. Название населенного пункта *
-										</div>
-										<div className='paragraph__body'>
-											<TextView
-												name='location'
-												value={location}
-												onBlur={val => this.handleChange(null, 'location', val)}
-											/>
-										</div>
-									</div>
+									{sheets.map(sh => <Sheet key={sh.id} {...sh} onChange={this.handleSheetChange}/>)}
 								</div>
 							</div>
 						}

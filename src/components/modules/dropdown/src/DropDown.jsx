@@ -208,6 +208,7 @@ DropDown.propTypes = {
 };
 
 DropDown.defaultProps = {
+	selectedPayload: '',
 	items: [],
 	deviders: [],
 	isReset: false,
